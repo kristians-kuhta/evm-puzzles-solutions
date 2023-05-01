@@ -1,8 +1,15 @@
 # Solutions for the EVM puzzles game
 
+[EVM puzzles game](https://github.com/fvictorio/evm-puzzles)
+
 ## Puzzle #1
 
-Op-codes:
+### Code
+```
+3456FDFDFDFDFDFD5B00
+```
+
+### Op-codes
 
 ```
 [00]	CALLVALUE
@@ -17,7 +24,7 @@ Op-codes:
 [09]	STOP
 ```
 
-Steps:
+### Steps
 
 Let's use reverse engineering to resolve this issue.
 
@@ -32,12 +39,17 @@ There is only one operation before the `JUMP` instruction and that is `CALLVALUE
 
 The `CALLVALUE` instruction copies the call value to the stack as the first element.
 
-
-Therefore it makes sense that one must provide `0x08` as the value for the call to ensure that the code reaches the `STOP` instruction without reverting.
+### Answer
+Value: `0x08`
 
 ## Puzzle #2
 
-Op-codes:
+### Code
+```
+34380356FDFD5B00FDFD
+```
+
+### Op-codes
 
 ```
 [00]	CALLVALUE
@@ -52,7 +64,7 @@ Op-codes:
 [09]	REVERT
 ```
 
-Steps:
+### Steps
 
 Let's use reverse engineering to resolve this issue.
 
@@ -75,6 +87,44 @@ So the total size of code is 10 bytes.
 
 Therefore it makes sense that one must provide `0x04` as the value for the call to ensure that the code reaches the `STOP` instruction without reverting.
 
+### Answer
+Value: `0x04`
+
+## Puzzle #3
+
+### Code
 ```
-0x0a - 0x04 = 0x06 (prog. counter we are jumping to)
+3656FDFD5B00
 ```
+
+### Op-codes
+
+```
+[00]	CALLDATASIZE
+[01]	JUMP
+[02]	REVERT
+[03]	REVERT
+[04]	JUMPDEST
+[05]	STOP
+```
+
+### Steps
+
+Let's use reverse engineering to resolve this issue.
+
+We start of by figuring out that we want to end up on the only `JUMPDEST` operation that is followed by a `STOP` instruction.
+In this case that is instruction where the program counter is `0x04`.
+
+In this list of instructions we have only one `JUMP` operation and it takes a single stack argument which is the program counter where we should jump.
+
+The new program counter must be a `JUMPDEST` operation, otherwise the EVM will abort with an error.
+
+The operation before `JUMP` is `CALLDATASIZE`.
+
+This operation pushed the length of data (in bytes) to top of the stack.
+The size of the data has to be 4 bytes to jump to `0x04` instruction.
+
+Therefore we can provide any data that is 4 bytes long and this solves the puzzle.
+
+### Answer
+Data: `0x12345678`
