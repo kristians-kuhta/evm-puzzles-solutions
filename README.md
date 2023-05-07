@@ -141,17 +141,17 @@ Data: 0x12345678
 34381856FDFDFDFDFDFD5B00
 ```
 ### Op-codes
-[00]	CALLVALUE	
-[01]	CODESIZE	
-[02]	XOR	
-[03]	JUMP	
-[04]	REVERT	
-[05]	REVERT	
-[06]	REVERT	
-[07]	REVERT	
-[08]	REVERT	
-[09]	REVERT	
-[0a]	JUMPDEST	
+[00]	CALLVALUE
+[01]	CODESIZE
+[02]	XOR
+[03]	JUMP
+[04]	REVERT
+[05]	REVERT
+[06]	REVERT
+[07]	REVERT
+[08]	REVERT
+[09]	REVERT
+[0a]	JUMPDEST
 [0b]	STOP
 ### Steps
 Let's use reverse engineering to resolve this issue.
