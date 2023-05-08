@@ -190,3 +190,58 @@ Looks like the value we need is `0110` or `6`.
 ```
 Value: 6
 ```
+
+## Puzzle #5
+### Code
+```
+34800261010014600C57FDFD5B00FDFD
+```
+### Op-codes
+```
+[00]	CALLVALUE
+[01]	DUP1
+[02]	MUL
+[03]	PUSH2	0100
+[06]	EQ
+[07]	PUSH1	0C
+[09]	JUMPI
+[0a]	REVERT
+[0b]	REVERT
+[0c]	JUMPDEST
+[0d]	STOP
+[0e]	REVERT
+[0f]	REVERT
+```
+
+### Steps
+Let's use reverse engineering to resolve this issue.
+
+We start of by figuring out that we want to end up on the only `JUMPDEST` operation that is followed by a `STOP` instruction. In this case that is instruction where the program counter is `0x0c`.
+
+In this list of instructions we have only one `JUMPI` operation and it takes a two stack arguments: the program counter where we should jump and if the jump should be performed.
+
+The new program counter must be a `JUMPDEST` operation, otherwise the EVM will abort with an error.
+
+The operation before `JUMPI` is `PUSH1` with the correct jump destination.
+Therefore the previous stack element should be `1` for the jump to be performed.
+
+The previous operation is `EQ` and it compares the result of the
+```
+CALLVALUE * CALLVALUE ?= 0x100
+```
+
+being equal `1`.
+
+If that is the case, the jump will be performed.
+
+The hex. value `0x100` is
+```
+1*16**2 + 0*16**1 + 0*16**0 = 16**2 = 256
+```
+
+Looks like the value we need is 16.
+
+### Answer
+```
+Value: 16
+```
